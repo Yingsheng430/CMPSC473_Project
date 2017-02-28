@@ -24,5 +24,6 @@ public:
 	MyScheduler(Policy p, unsigned int n) : Scheduler(p, n) {}
 	bool Dispatch() override; //Function to implement scheduling policy and to keep a check on processed threads
 	void CreateThread(int arriving_time, int remaining_time, int priority, int tid) override; //Function to create threads and insert them in student defined data structure
-	void firstcome(queue<ThreadDescriptorBlock*>&, int &, int&, bool&);
+	void firstcome(vector<ThreadDescriptorBlock*>&, int &, int&, int&);
+	void shortest_wo(vector<ThreadDescriptorBlock*>&, int &, int&, int&, vector<ThreadDescriptorBlock*>&);
 };
