@@ -13,26 +13,34 @@ void MyScheduler::CreateThread(int arriving_time, int remaining_time, int priori
 	newthread->remaining_time = remaining_time;
 	newthread->priority = priority;
 	newthread->tid = tid;
+
 	q.push(newthread);
 	//free(newthread);
 
 }
-
-void MyScheduler::firstcome(queue<ThreadDescriptorBlock*> &que, int &num, int& i, bool& empty)
+bool compare(ThreadDescriptorBlock* a, ThreadDescriptorBlock* b)
 {
-		if (que.empty())
-		{
-			empty = true;
-		}
-		else
+	return(a->arriving_time < b->arriving_time);
+}
+
+void MyScheduler::firstcome(queue<ThreadDescriptorBlock*> &que, int &timer, int& i, bool& empty)
+{
+	
+	//sort(que.begin(), que.end(), compare);
+	if (que.empty())
+	{
+		empty = true;
+	}
+	else
+	{
+		if (que.front()->arriving_time <= timer)
 		{
 			CPUs[i] = que.front();
 			que.pop();
-			/*if (!que.empty())
-			cout << "Time: " << timer << " CPU: " << i << " Thread: " << que.front()->tid << endl;*/
 		}
-		
-
+		/*if (!que.empty())
+		cout << "Time: " << timer << " CPU: " << i << " Thread: " << que.front()->tid << endl;*/
+	}
 
 }
 
@@ -40,37 +48,6 @@ bool MyScheduler::Dispatch()
 {
 	//Todo: Check and remove finished threads
 	//Todo: Check if all the threads are finished; if so, return false
-	/*
-	for (int i = 1; i <=num_cpu; i++)
-	{
-	if (CPUs[i] != NULL)
-	{
-	continue;
-	return true;
-	}
-	if (!empty)//null and empty
-	{
-	firstcome(q, timer, i, empty);
-	return true;
-	}
-	else//empty
-	{
-	for (int j = 1; j <= num_cpu; j++)
-	{
-	if (CPUs[j] != NULL)
-	{
-	return true;
-	}
-	if (j == num_cpu)
-	{
-	return false;
-	break;
-	}
-	}
-	}
-	return false;
-	}
-	*/
 	switch(policy)
 	{
 
@@ -81,10 +58,10 @@ bool MyScheduler::Dispatch()
 			{
 				if (CPUs[j] == NULL)
 				{
-					firstcome(q, timer, j, empty);
+					firstcome(q, timer, j, empty);	
 				}
-				return  true;
 			}
+			return true;
 		}
 		for (int i = 0; i < num_cpu; i++)
 		{

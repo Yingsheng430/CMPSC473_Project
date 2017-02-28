@@ -7,15 +7,18 @@
 int main(int argc, char* argv[])
 {
 	
-	int n =3;
-	Policy p = FCFS;
-	MyScheduler test(p, n);
-	test.CreateThread(0, 10, 1, 1);//at,rt,pri,tid
-	test.CreateThread(1, 10, 1, 2);
-	test.CreateThread(3, 3, 1, 3);
-	test.CreateThread(4, 4, 1, 4);
-	test.CreateThread(5, 5, 1, 5);
-	test.Go();	
+
+	cout << "\tOutput for 3 CPU FCFS\n";
+	MyScheduler ms3 = MyScheduler(Policy::FCFS, 3);
+	ms3.CreateThread(1, 24, 0, 9000);
+	ms3.CreateThread(2, 3, 0, 9001);
+	ms3.CreateThread(3, 4, 0, 9002);
+	ms3.Go();
+	/* Results should be:
+	Thread ID : 9001 Finishing Time :  5 CPU No. : 1
+	Thread ID : 9002 Finishing Time :  7 CPU No. : 2
+	Thread ID : 9000 Finishing Time : 25 CPU No. : 0  */
+
 	return 0;
 }
 
