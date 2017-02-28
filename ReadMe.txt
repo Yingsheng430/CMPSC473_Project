@@ -35,6 +35,11 @@ StdAfx.h, StdAfx.cpp
 Other notes:
 
 AppWizard uses "TODO:" comments to indicate parts of the source code you
+<<<<<<< HEAD
 should add to or customize.lll
 
+=======
+should add to or customize.
+2017
+>>>>>>> origin/master
 /////////////////////////////////////////////////////////////////////////////
