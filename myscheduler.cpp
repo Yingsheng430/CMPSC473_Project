@@ -6,7 +6,6 @@
 #include <iterator>
 #include<vector>
 vector<ThreadDescriptorBlock*> q;
-vector<ThreadDescriptorBlock*>temp;
 int z = 0;
 bool first = true;
 bool setbegin =false;
@@ -41,7 +40,7 @@ void MyScheduler::firstcome(vector<ThreadDescriptorBlock*> &que, int &timer, int
 	{
 		CPUs[i] = que[z];
 		z++;
-		//que.erase(que.begin());
+			
 	}
 }
 void MyScheduler::shortest_wo(vector<ThreadDescriptorBlock*> &que, int &timer, int& i, int&z,int&begin, int&end, bool& setbegin)
@@ -57,9 +56,6 @@ void MyScheduler::shortest_wo(vector<ThreadDescriptorBlock*> &que, int &timer, i
 		
 		if (first)
 		{
-			
-			//cout << "begin at " << beginat << endl;
-			//cout << "end at " << endat << endl;
 			z = beginat;
 			CPUs[i] = que[z];
 			z++;
@@ -68,16 +64,11 @@ void MyScheduler::shortest_wo(vector<ThreadDescriptorBlock*> &que, int &timer, i
 		else
 		{
 			CPUs[i] = que[z];
-			//cout << "inserting thread" << CPUs[i]->tid << endl;
-			//cout << "begin at " << beginat << endl;
-			//cout << "end at " << endat << endl;
-	
 			if (z == endat)
 			{
 				z = endat + 1;
 				setbegin = false;
 			}
-				//contine with next element
 			else
 			z++;//reset so that does not exit the while 
 		}
@@ -96,7 +87,6 @@ void MyScheduler::find_range(vector<ThreadDescriptorBlock*> &que, int &timer, in
 		if (z == que.size() - 1)
 		{
 			end = z;
-			//cout << "end at " << endat << endl;
 		}
 		else if (z != que.size() - 1 && que[z + 1]->arriving_time > timer)
 		{
@@ -117,7 +107,7 @@ void MyScheduler::find_range(vector<ThreadDescriptorBlock*> &que, int &timer, in
 
 		z++;
 	}
-	for (int p = begin; p <end; p++)
+	for (int p = begin; p <end; p++)//sort accroding to remaining time
 	{
 		for (int q = p + 1; q <= end; q++)
 		{
@@ -143,12 +133,12 @@ bool MyScheduler::Dispatch()
 	switch (policy)
 	{
 	case FCFS://First Come First Serve
-		
+		//cout << "dispatching";
 		while (z < q.size())
 		{
 			for (int j = 0; j < num_cpu; j++)
 			{
-				if (CPUs[j] == NULL)
+				if (CPUs[j] == NULL&& z <q.size())
 				{
 					firstcome(q, timer, j, z);
 				}
@@ -164,12 +154,12 @@ bool MyScheduler::Dispatch()
 			if (i == num_cpu - 1)
 			{
 				z = 0;
-				/*for (vector<ThreadDescriptorBlock*>::iterator it = q.begin(); it != q.end(); it++)
+				/*for (int j = 0; j < q.size(); j++)
 				{
-				delete(*it);
+					free(q[j]);
 				}*/
-				//where to free? execut
 				return false;
+				break;
 			}
 		}
 		break;
@@ -197,11 +187,12 @@ bool MyScheduler::Dispatch()
 				z = 0;//reset z
 				first = true;
 				setbegin = false;
-				/*for (vector<ThreadDescriptorBlock*>::iterator it = q.begin(); it != q.end(); it++)
+				beginat = 0;
+				endat = 0;
+				for (int j = 0; j < q.size(); j++)
 				{
-				delete(*it);
-				}*/
-				//where to free? execut
+					free(q[j]);
+				}
 				return false;
 			}
 		}
