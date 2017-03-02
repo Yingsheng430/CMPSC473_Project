@@ -17,13 +17,12 @@
 	*
 	*
 	*/
-
-
 class MyScheduler: public Scheduler {
 public:
 	MyScheduler(Policy p, unsigned int n) : Scheduler(p, n) {}
 	bool Dispatch() override; //Function to implement scheduling policy and to keep a check on processed threads
 	void CreateThread(int arriving_time, int remaining_time, int priority, int tid) override; //Function to create threads and insert them in student defined data structure
 	void firstcome(vector<ThreadDescriptorBlock*>&, int &, int&, int&);
-	void shortest_wo(vector<ThreadDescriptorBlock*>&, int &, int&, int&, vector<ThreadDescriptorBlock*>&);
+	void MyScheduler::find_range(vector<ThreadDescriptorBlock*> &que, int& timer, int z, int&begin, int&end, bool &setb);
+	void shortest_wo(vector<ThreadDescriptorBlock*>&, int &, int&, int&, int&, int&, bool&);
 };

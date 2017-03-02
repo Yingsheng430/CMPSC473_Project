@@ -8,7 +8,10 @@
 vector<ThreadDescriptorBlock*> q;
 vector<ThreadDescriptorBlock*>temp;
 int z = 0;
-
+bool first = true;
+bool setbegin =false;
+int beginat = 0;
+int endat = 0;
 void MyScheduler::CreateThread(int arriving_time, int remaining_time, int priority, int tid) //Thread ID not Process ID
 {
 	
@@ -27,12 +30,6 @@ bool compare(ThreadDescriptorBlock* a, ThreadDescriptorBlock* b)
 	return a->arriving_time < b->arriving_time;
 }
 
-bool compareRT(ThreadDescriptorBlock* a, ThreadDescriptorBlock* b)
-{
-
-	return a->remaining_time < b->remaining_time;
-}
-
 void MyScheduler::firstcome(vector<ThreadDescriptorBlock*> &que, int &timer, int& i, int& z)
 {
 	
@@ -47,20 +44,95 @@ void MyScheduler::firstcome(vector<ThreadDescriptorBlock*> &que, int &timer, int
 		//que.erase(que.begin());
 	}
 }
-void MyScheduler::shortest_wo(vector<ThreadDescriptorBlock*> &que, int &timer, int& i, int&z, vector<ThreadDescriptorBlock*>&temp)
+void MyScheduler::shortest_wo(vector<ThreadDescriptorBlock*> &que, int &timer, int& i, int&z,int&begin, int&end, bool& setbegin)
 {
-
 	if (z == 0)
 	{
 		sort(que.begin(), que.end(), compare);
 	}
-	while (que[z]->arriving_time <= timer)
+
+	if (z <= endat)//multiple
 	{
-		temp.push_back(que[z]);
-		sort(temp.begin(), temp.end(), compareRT);
+		
+		
+		if (first)
+		{
+			
+			//cout << "begin at " << beginat << endl;
+			//cout << "end at " << endat << endl;
+			z = beginat;
+			CPUs[i] = que[z];
+			z++;
+			first = false;
+		}
+		else
+		{
+			CPUs[i] = que[z];
+			//cout << "inserting thread" << CPUs[i]->tid << endl;
+			//cout << "begin at " << beginat << endl;
+			//cout << "end at " << endat << endl;
+	
+			if (z == endat)
+			{
+				z = endat + 1;
+				setbegin = false;
+			}
+				//contine with next element
+			else
+			z++;//reset so that does not exit the while 
+		}
+
+	}
+
+}
+void MyScheduler::find_range(vector<ThreadDescriptorBlock*> &que, int &timer, int z, int&begin, int&end, bool&setbegin)
+{
+	if (z == 0)
+	{
+		sort(que.begin(), que.end(), compare);
+	}
+	while (z < que.size() && que[z]->arriving_time <= timer)
+	{
+		if (z == que.size() - 1)
+		{
+			end = z;
+			//cout << "end at " << endat << endl;
+		}
+		else if (z != que.size() - 1 && que[z + 1]->arriving_time > timer)
+		{
+			end = z;
+			//cout << "end at " << end << endl;
+		}
+		if (z == 0)
+		{
+			begin = z;
+
+		}
+		else if (z != 0 && que[z - 1]->arriving_time < timer&& !setbegin)
+		{
+			begin = z;
+			setbegin = true;
+			//cout << "begin at " << begin << endl;
+		}
+
 		z++;
 	}
+	for (int p = begin; p <end; p++)
+	{
+		for (int q = p + 1; q <= end; q++)
+		{
+			if (que[p]->remaining_time > que[q]->remaining_time)
+			{
+				ThreadDescriptorBlock* temp;
+				temp = que[p];
+				que[p] = que[q];
+				que[q] = temp;
+			}
+		}
+	}
+
 }
+	
 
 
 bool MyScheduler::Dispatch()
@@ -71,7 +143,7 @@ bool MyScheduler::Dispatch()
 	switch (policy)
 	{
 	case FCFS://First Come First Serve
-		//sortAT(q);
+		
 		while (z < q.size())
 		{
 			for (int j = 0; j < num_cpu; j++)
@@ -89,7 +161,6 @@ bool MyScheduler::Dispatch()
 			{
 				return true;
 			}
-
 			if (i == num_cpu - 1)
 			{
 				z = 0;
@@ -109,15 +180,8 @@ bool MyScheduler::Dispatch()
 			{
 				if (CPUs[j] == NULL)
 				{
-					shortest_wo(q, timer, j, z, temp);
-					while (!temp.empty())
-					{
-						CPUs[j] = temp[0];
-						cout << temp[0]->tid << endl;
-						if (temp.empty())
-							break;
-						temp.erase(temp.begin()+0);
-					}
+					find_range(q, timer, z, beginat, endat,setbegin);
+					shortest_wo(q, timer, j, z,beginat, endat,setbegin);
 				}
 			}
 			return true;
@@ -128,10 +192,11 @@ bool MyScheduler::Dispatch()
 			{
 				return true;
 			}
-
-			if (i == num_cpu - 1)
+			if (i == num_cpu - 1)//reset and return false
 			{
-				z = 0;
+				z = 0;//reset z
+				first = true;
+				setbegin = false;
 				/*for (vector<ThreadDescriptorBlock*>::iterator it = q.begin(); it != q.end(); it++)
 				{
 				delete(*it);
@@ -150,5 +215,5 @@ bool MyScheduler::Dispatch()
 			cout<<"Invalid policy!";
 			throw 0;
 	}
-	return true;
+	
 }
