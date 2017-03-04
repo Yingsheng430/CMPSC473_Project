@@ -10,6 +10,7 @@
 
 #include "scheduler.h"
 #include<queue>
+#include<vector>
 //Define your data structure here.
 	/*
 	*
@@ -17,6 +18,7 @@
 	*
 	*
 	*/
+
 class MyScheduler: public Scheduler {
 public:
 	MyScheduler(Policy p, unsigned int n) : Scheduler(p, n) {}
@@ -27,5 +29,6 @@ public:
 	void find_range(vector<ThreadDescriptorBlock*> &que, int& timer, int z, int&begin, int&end, bool &setb);
 	void shortest_wo(vector<ThreadDescriptorBlock*>&, int &, int&, int&, int&, int&);
 	void MyScheduler::sort_SRTwP(vector<ThreadDescriptorBlock*> &que, int &timer, vector<ThreadDescriptorBlock*>&newque, int&);
+	void MyScheduler::sort_PBS(vector<ThreadDescriptorBlock*> &que, int &timer, vector<ThreadDescriptorBlock*>&newque, int&beginat);
 	
 };

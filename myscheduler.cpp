@@ -1,12 +1,18 @@
 //myschedule.cpp
+/*
+Name: JIaxin Liang
+Name: Xuejian Zhou
+
+*/
+
+
 /*Define all the functions in 'myschedule.h' here.*/
 #include "myscheduler.h"
-#include<queue>
 #include<algorithm>
 #include <iterator>
-#include<vector>
 vector<ThreadDescriptorBlock*> q;
 vector<ThreadDescriptorBlock*>newq;
+
 int z = 0;
 bool first = true;
 bool setbegin =false;
@@ -150,6 +156,34 @@ void MyScheduler::sort_SRTwP(vector<ThreadDescriptorBlock*> &que, int &timer, ve
 	}
 
 }
+void MyScheduler::sort_PBS(vector<ThreadDescriptorBlock*> &que, int &timer, vector<ThreadDescriptorBlock*>&newque, int&beginat)	//push the ones that are ready to new que, sort it according to rt
+{
+
+
+	while (beginat < que.size() && timer == que[beginat]->arriving_time)
+	{
+		newque.push_back(que[beginat]);
+		beginat++;
+	}
+	if (!newque.empty())
+	{
+		for (int p = 0; p< newque.size() - 1; p++)//sort accroding to remaining time
+		{
+			for (int q = p + 1; q < newque.size(); q++)
+			{
+				if (newque[p]->priority < newque[q]->priority)
+				{
+					ThreadDescriptorBlock* temp;
+					temp = newque[p];
+					newque[p] = newque[q];
+					newque[q] = temp;
+				}
+			}
+		}
+
+	}
+
+}
 
 bool MyScheduler::Dispatch()
 {
@@ -233,8 +267,10 @@ bool MyScheduler::Dispatch()
 				if (endat == q.size())
 				{
 					freeque(q);
+					freeque(newq);
 					beginat = 0; 
 					endat = 0;
+					z = 0;
 					return false;
 				}
 			}
@@ -259,15 +295,63 @@ bool MyScheduler::Dispatch()
 			
 			return true;
 		}
-		return false;
 		
-
-		//sortCPUs(CPUs,num_cpu);
-
-		//sortCPUs(CPUs);
+		return false;
 
 		break;
 	case PBS:		//Priority Based Scheduling, with preemption
+	{
+						sort(q.begin(), q.end(), compare);// ort according to AT
+						sort_PBS(q, timer, newq, beginat); //add in new thread to newque at new timer sort them 
+						z = 0;//new queue iterator
+						endat = 0;
+						for (int i = 0; i < newq.size(); i++)
+						{
+							if (newq[i]->remaining_time == 0)
+							{
+								endat++;
+							}
+							if (endat == q.size())
+							{
+								freeque(q);
+								freeque(newq);
+								beginat = 0;
+								endat = 0;
+								z = 0;
+								return false;
+							}
+						}
+
+						for (int i = 0; i < num_cpu; i++)
+						{
+							//in_or_out(z, CPUs, num_cpu,in);
+
+							if (z < newq.size())//not in 
+							{
+								for (int j = i + 1; j < num_cpu; j++)
+								{
+									CPUs[j] = NULL;
+								}
+
+								if (z < newq.size())
+								{
+									while (newq[z]->remaining_time == 0)
+									{
+										z++;
+									}
+									if (z < newq.size())
+									{
+										CPUs[i] = newq[z];
+									}
+									z++;
+								}
+								//}
+							}
+
+						}
+						return true;
+	}
+		return false;
 		break;
 	default:
 		cout << "Invalid policy!";
