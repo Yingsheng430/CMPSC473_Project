@@ -122,71 +122,6 @@ void MyScheduler::find_range(vector<ThreadDescriptorBlock*> &que, int &timer, in
 	}
 
 }
-void MyScheduler::in_or_out(ThreadDescriptorBlock*CPUs[],int num_cpu, vector<int> &invalid_tid)
-{
-	/*while (int j = 0; j < newque.size(); j++)
-	for (int k = 0; k < num_cpu; k++)
-	{
-		if (CPUs[k] != NULL &&z < newq.size() && newq[z]->tid == CPUs[k]->tid)
-		{
-			in = true;
-			break;
-		}
-	}*/
-	int count = 0;
-	
-		//for (int j = 0; j < num_cpu; j++)
-		//{
-		//	if (CPUs[j] == NULL)
-		//	{
-		//		if (CPUs[j] != NULL &&z < newq.size() && newq[z]->tid == CPUs[j]->tid)
-		//		{
-
-		//			z++;
-		//			//count++;
-		//		}
-		//	}
-		//	
-		//}
-	
-	for (int j = 0; j < num_cpu; j++)
-	{
-		if (CPUs[j] != NULL &&z < newq.size() && newq[z]->tid == CPUs[j]->tid)
-		{
-			invalid_tid.push_back(newq[z]->tid);
-			z++;
-		}
-	}
-	
-}
-void MyScheduler::sortCPUs(ThreadDescriptorBlock* CPUs[], int num_cpus)
-{
-	for (int i = 0; i < num_cpus-1; i++)
-	{
-		for (int j = i; j < num_cpus; j++)
-		{
-			if (CPUs[i] == NULL)
-			{
-				ThreadDescriptorBlock* temp = CPUs[i];
-				CPUs[i] = CPUs[i + 1];
-				CPUs[i + 1] = temp;
-			}
-			if (CPUs[j] != NULL)
-			{
-				ThreadDescriptorBlock* temp = CPUs[j];
-				CPUs[j] = CPUs[j + 1];
-				CPUs[ + 1] = temp;
-			}
-
-			if (CPUs[i] != NULL && CPUs[j] != NULL&& CPUs[i]->remaining_time < CPUs[j]->remaining_time)
-			{
-				ThreadDescriptorBlock* temp= CPUs[i];
-				CPUs[i] = CPUs[j];
-				CPUs[j] = temp;
-			}
-		}
-	}
-}
 void MyScheduler::sort_SRTwP(vector<ThreadDescriptorBlock*> &que, int &timer, vector<ThreadDescriptorBlock*>&newque,int&beginat)	//push the ones that are ready to new que, sort it according to rt
 {
 
@@ -220,7 +155,7 @@ bool MyScheduler::Dispatch()
 {
 	//Todo: Check and remove finished threads
 	//Todo: Check if all the threads are finished; if so, return false
-	cout << "Dispatch running" << endl;
+	//cout << "Dispatch running" << endl;
 	switch (policy)
 	{
 	case FCFS://First Come First Serve
@@ -285,7 +220,7 @@ bool MyScheduler::Dispatch()
 		}
 		break;
 	case STRFwP:	//Shortest Time Remaining First, with preemption
-		while (endat < q.size())
+		
 		{
 			sort(q.begin(), q.end(), compare);// ort according to AT
 			sort_SRTwP(q, timer, newq, beginat); //add in new thread to newque at new timer sort them 
@@ -295,41 +230,36 @@ bool MyScheduler::Dispatch()
 			{
 				z++;
 				endat++;
-			}
-			if (endat > q.size())
-				return false;
-			int nullcpu = 0;
-			for (int i = 0; i < num_cpu; i++)
-			{
-				if (CPUs[i] == NULL)
-					nullcpu++;
+				if (endat == q.size())
+				{
+					freeque(q);
+					beginat = 0; 
+					endat = 0;
+					return false;
+				}
 			}
 			
-			if (newq.size() - z < num_cpu - nullcpu && nullcpu!=0)
-			{
-				return true;
-			}
-
 			for (int i = 0; i < num_cpu; i++)
 			{
 				//in_or_out(z, CPUs, num_cpu,in);
 			
 				if (z < newq.size())//not in 
 				{
-					
-					//if (newq.size() - z > num_cpu)
-					//{
-				
-					
-						CPUs[i] = newq[z];
-						z++;
-					
-					//}
 
+					for (int j = i+1; j < num_cpu; j++)
+					{
+						CPUs[j] = NULL;
+					}
+					CPUs[i] = newq[z];
+					z++;
+					//}
 				}
+
 			}
+			
 			return true;
 		}
+		return false;
 		
 
 		//sortCPUs(CPUs,num_cpu);

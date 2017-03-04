@@ -27,7 +27,5 @@ public:
 	void find_range(vector<ThreadDescriptorBlock*> &que, int& timer, int z, int&begin, int&end, bool &setb);
 	void shortest_wo(vector<ThreadDescriptorBlock*>&, int &, int&, int&, int&, int&);
 	void MyScheduler::sort_SRTwP(vector<ThreadDescriptorBlock*> &que, int &timer, vector<ThreadDescriptorBlock*>&newque, int&);
-	void MyScheduler::sortCPUs(ThreadDescriptorBlock* CPUs[],int);
-	void MyScheduler::in_or_out(ThreadDescriptorBlock*CPUs[], int num_cpu, vector<int> &invalid_tid);
-	void MyScheduler::clearup(vector<ThreadDescriptorBlock*>&que, vector<ThreadDescriptorBlock*>&newq, ThreadDescriptorBlock* CPUs[], int num_cpu);
+	
 };
