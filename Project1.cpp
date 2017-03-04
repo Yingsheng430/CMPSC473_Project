@@ -6,36 +6,34 @@
 
 int main(int argc, char* argv[])
 {
-	
 
 	
-	MyScheduler myScheduler(FCFS, 2);
 
-	myScheduler.CreateThread(1, 5, 1, 0);
-	myScheduler.CreateThread(3, 13, 2, 1);
-	myScheduler.CreateThread(0, 32, 2, 2);
-	myScheduler.CreateThread(2, 10, 2, 3);
-	myScheduler.Go();
-	/*Our output
-	Thread ID : 0 Finishing Time : 6 CPU No. : 1
-	Thread ID : 3 Finishing Time : 16 CPU No. : 1
-	Thread ID : 1 Finishing Time : 29 CPU No. : 1
-	Thread ID : 2 Finishing Time : 32 CPU No. : 0
-	*/
+	cout << "STRFwP Policy, 3 CPUs\n";
+	MyScheduler ms3 = MyScheduler(Policy::STRFwP, 3);
+	ms3.CreateThread(0, 12, 0, 0);
+	ms3.CreateThread(5, 2, 2, 1);
+	ms3.CreateThread(3, 7, 1, 2);
+	ms3.CreateThread(9, 1, 10, 3);
+	ms3.CreateThread(1, 4, 3, 4);
+	ms3.CreateThread(5, 2, 3, 5);
+	ms3.CreateThread(1, 4, 3, 6);
 
+	ms3.Go();
 
-	/* My results, assuming my project works...
+	/*
+	Thread ID : 6 Finishing Time : 5 CPU No. : 0
 	Thread ID : 4 Finishing Time : 5 CPU No. : 1
-	Thread ID : 6 Finishing Time : 9 CPU No. : 1
-	Thread ID : 0 Finishing Time : 12 CPU No. : 0
-	Thread ID : 1 Finishing Time : 14 CPU No. : 0
-	Thread ID : 5 Finishing Time : 16 CPU No. : 0
-	Thread ID : 2 Finishing Time : 16 CPU No. : 1
-	Thread ID : 3 Finishing Time : 17 CPU No. : 0
+	Thread ID : 5 Finishing Time : 7 CPU No. : 0
+	Thread ID : 1 Finishing Time : 7 CPU No. : 1
+	Thread ID : 2 Finishing Time : 10 CPU No. : 0
+	Thread ID : 3 Finishing Time : 10 CPU No. : 1
+	Thread ID : 0 Finishing Time : 16 CPU No. : 0
+	All the Threads have been executed !! .. Exiting Scheduler ..
 	*/
-
-
 	////how to continue with another set of input?
+	//when do you need to use new? 
+	//Th
 	return 0;
 }
 
